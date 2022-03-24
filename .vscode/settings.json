@@ -1,0 +1,33 @@
+{
+    "cSpell.words": [
+        "BNOT",
+        "BXOR",
+        "cint",
+        "CSIZET",
+        "GETTABUP",
+        "IABC",
+        "IDIV",
+        "LOADK",
+        "LOADKX",
+        "luac",
+        "luago",
+        "Protos",
+        "SETTABUP",
+        "sizet",
+        "TBOOLEAN",
+        "TFORCALL",
+        "TFORLOOP",
+        "TFUNCTION",
+        "TLIGHTUSERDATA",
+        "TNIL",
+        "TNONE",
+        "TNUMBER",
+        "TSTRING",
+        "TTABLE",
+        "TTHREAD",
+        "TUSERDATA",
+        "Undump",
+        "Upvalue",
+        "Upvalues"
+    ]
+}
