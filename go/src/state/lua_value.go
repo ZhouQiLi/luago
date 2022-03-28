@@ -1,24 +1,24 @@
 package state
 
 import (
-	"luago/api"
+	. "luago/api"
 	"luago/number"
 )
 
 type luaValue interface{}
 
-func typeOf(val luaValue) api.LuaType {
+func typeOf(val luaValue) LuaType {
 	switch val.(type) {
 	case nil:
-		return api.LUA_TNIL
+		return LUA_TNIL
 	case bool:
-		return api.LUA_TBOOLEAN
+		return LUA_TBOOLEAN
 	case int64:
-		return api.LUA_TNUMBER
+		return LUA_TNUMBER
 	case float64:
-		return api.LUA_TNUMBER
+		return LUA_TNUMBER
 	case string:
-		return api.LUA_TSTRING
+		return LUA_TSTRING
 	default:
 		panic("Todo!")
 	}

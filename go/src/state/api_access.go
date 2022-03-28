@@ -1,61 +1,61 @@
 package state
 
 import (
-	"luago/api"
+	. "luago/api"
 	"strconv"
 )
 
-func (self *luaState) TypeName(luaType api.LuaType) string {
+func (self *luaState) TypeName(luaType LuaType) string {
 	switch luaType {
-	case api.LUA_TNONE:
+	case LUA_TNONE:
 		return "no value"
-	case api.LUA_TNIL:
+	case LUA_TNIL:
 		return "nil"
-	case api.LUA_TBOOLEAN:
+	case LUA_TBOOLEAN:
 		return "boolean"
-	case api.LUA_TNUMBER:
+	case LUA_TNUMBER:
 		return "number"
-	case api.LUA_TSTRING:
+	case LUA_TSTRING:
 		return "string"
-	case api.LUA_TTABLE:
+	case LUA_TTABLE:
 		return "table"
-	case api.LUA_TFUNCTION:
+	case LUA_TFUNCTION:
 		return "function"
-	case api.LUA_TTHREAD:
+	case LUA_TTHREAD:
 		return "thread"
 	default:
 		return "userdata"
 	}
 }
 
-func (self *luaState) Type(index int) api.LuaType {
+func (self *luaState) Type(index int) LuaType {
 	if self.stack.isValid(index) {
 		value := self.stack.get(index)
 		return typeOf(value)
 	}
 
-	return api.LUA_TNONE
+	return LUA_TNONE
 }
 
 func (self *luaState) IsNone(index int) bool {
-	return self.Type(index) == api.LUA_TNONE
+	return self.Type(index) == LUA_TNONE
 }
 
 func (self *luaState) IsNil(index int) bool {
-	return self.Type(index) == api.LUA_TNIL
+	return self.Type(index) == LUA_TNIL
 }
 
 func (self *luaState) IsNoneOrNil(index int) bool {
-	return self.Type(index) <= api.LUA_TNIL
+	return self.Type(index) <= LUA_TNIL
 }
 
 func (self *luaState) IsBoolean(index int) bool {
-	return self.Type(index) == api.LUA_TBOOLEAN
+	return self.Type(index) == LUA_TBOOLEAN
 }
 
 func (self *luaState) IsString(index int) bool {
 	t := self.Type(index)
-	return t == api.LUA_TSTRING || t == api.LUA_TNUMBER
+	return t == LUA_TSTRING || t == LUA_TNUMBER
 }
 
 func (self *luaState) IsNumber(index int) bool {

@@ -27,5 +27,11 @@ const (
 	LUA_OPSHL         // <<
 	LUA_OPSHR         // >>
 	LUA_OPUNM         // -
-	LUA_OPNOT         // ~
+	LUA_OPBNOT        // ~
+)
+
+const (
+	LUA_OPEQ = iota // ==
+	LUA_OPLT        // <
+	LUA_OPLE        // <=
 )
