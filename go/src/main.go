@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	. "luago/api"
-	"luago/state"
 )
 
 // func main() {
@@ -76,26 +75,26 @@ func printStack(L LuaState) {
 	fmt.Println()
 }
 
-func main() {
-	L := state.New()
-	L.PushInteger(1)
-	L.PushString("2.0")
-	L.PushString("3.0")
-	L.PushNumber(4.0)
-	printStack(L)
+// func main() {
+// L := state.New()
+// L.PushInteger(1)
+// L.PushString("2.0")
+// L.PushString("3.0")
+// L.PushNumber(4.0)
+// printStack(L)
 
-	L.Arith(LUA_OPADD)
-	printStack(L)
+// L.Arith(LUA_OPADD)
+// printStack(L)
 
-	L.Arith(LUA_OPBNOT)
-	printStack(L)
+// L.Arith(LUA_OPBNOT)
+// printStack(L)
 
-	L.Len(2)
-	printStack(L)
+// L.Len(2)
+// printStack(L)
 
-	L.Concat(3)
-	printStack(L)
+// L.Concat(3)
+// printStack(L)
 
-	L.PushBoolean(L.Compare(1, 2, LUA_OPEQ))
-	printStack(L)
-}
+// L.PushBoolean(L.Compare(1, 2, LUA_OPEQ))
+// printStack(L)
+// }

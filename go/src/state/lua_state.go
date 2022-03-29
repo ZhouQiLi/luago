@@ -1,11 +1,17 @@
 package state
 
+import "luago/binary_chunk"
+
 type luaState struct {
 	stack *luaStack
+	proto *binary_chunk.Prototype
+	pc    int
 }
 
-func New() *luaState {
+func New(stackSize int, proto *binary_chunk.Prototype) *luaState {
 	return &luaState{
-		stack: newLuaStack(20),
+		stack: newLuaStack(stackSize),
+		proto: proto,
+		pc:    0,
 	}
 }
