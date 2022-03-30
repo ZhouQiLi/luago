@@ -14,6 +14,7 @@ func (self *luaState) Fetch() uint32 {
 	return i
 }
 
+// 将常量数据写入栈顶
 func (self *luaState) GetConst(index int) {
 	c := self.proto.Constants[index]
 	self.stack.push(c)
