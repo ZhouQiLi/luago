@@ -43,8 +43,19 @@ type LuaState interface {
 	PushNumber(n float64)
 	PushString(s string)
 
+	// 操作符
 	Arith(op ArithOp)
 	Compare(index1, index2 int, op CompareOp) bool
 	Len(index int)
 	Concat(n int)
+
+	// 表操作
+	NewTable()
+	CreateTable(arrSize, mapSize int)
+	GetTable(index int) LuaType
+	GetField(index int, key string) LuaType
+	GetI(index int, i int64) LuaType
+	SetTable(index int)
+	SetField(index int, k string)
+	SetI(index int, i int64)
 }

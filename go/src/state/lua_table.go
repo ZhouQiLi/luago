@@ -53,10 +53,12 @@ func (self *luaTable) shrinkArray() {
 }
 
 func (self *luaTable) expandArray() {
-	for i := self.len() + 1; true; i++ {
+	for i := int64(len(self.arr)) + 1; true; i++ {
 		if value, found := self._map[i]; found {
 			delete(self._map, i)
 			self.arr = append(self.arr, value)
+		} else {
+			break
 		}
 	}
 }
