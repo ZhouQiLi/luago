@@ -58,4 +58,8 @@ type LuaState interface {
 	SetTable(index int)
 	SetField(index int, k string)
 	SetI(index int, i int64)
+
+	// 函数调用
+	Load(chunk []byte, chunkName, mode string) int
+	Call(argsCount, results int)
 }

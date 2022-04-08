@@ -52,10 +52,27 @@ func setList(i Instruction, vm LuaVM) {
 		c = Instruction(vm.Fetch()).Ax()
 	}
 
+	// 当操作数b为0时, 说明要初始化的元素都在栈顶
+	bIsZero := b == 0
+	if bIsZero {
+		b = int(vm.ToInteger(-1)) - a - 1
+		vm.Pop(1)
+	}
+
 	index := int64(c * FIELDS_PER_FLUSH)
 	for j := 1; j <= b; j++ {
 		index++
 		vm.PushValue(a + j)
 		vm.SetI(a, index)
+	}
+
+	if bIsZero {
+		for j := vm.RegisterCount() + 1; j <= vm.GetTop(); j++ {
+			index++
+			vm.PushValue(j)
+			vm.SetI(a, index)
+		}
+
+		vm.SetTop(vm.RegisterCount())
 	}
 }

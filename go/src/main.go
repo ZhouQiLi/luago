@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	. "luago/api"
-	"luago/binary_chunk"
 	"luago/state"
-	. "luago/vm"
+
+	// . "luago/vm"
 	"os"
 )
 
@@ -104,30 +104,43 @@ func printStack(L LuaState) {
 // printStack(L)
 // }
 
+// func main() {
+// 	if len(os.Args) > 1 {
+// 		data, err := ioutil.ReadFile(os.Args[1])
+// 		if err != nil {
+// 			panic(err)
+// 		}
+// 		proto := binary_chunk.Undump(data)
+// 		luaMain(proto)
+// 	}
+// }
+
+// func luaMain(proto *binary_chunk.Prototype) {
+// 	maxStackSize := int(proto.MaxStackSize)
+// 	L := state.New(maxStackSize+8, proto)
+// 	L.SetTop(maxStackSize)
+// 	for {
+// 		pc := L.PC()
+// 		inst := Instruction(L.Fetch())
+// 		if inst.Opcode() != OP_RETURN {
+// 			inst.Execute(L)
+// 			fmt.Printf("[%02d] %s", pc+1, inst.OpName())
+// 			printStack(L)
+// 		} else {
+// 			break
+// 		}
+// 	}
+// }
+
 func main() {
 	if len(os.Args) > 1 {
 		data, err := ioutil.ReadFile(os.Args[1])
 		if err != nil {
 			panic(err)
 		}
-		proto := binary_chunk.Undump(data)
-		luaMain(proto)
-	}
-}
+		L := state.New()
+		L.Load(data, os.Args[1], "b")
+		L.Call(0, 0)
 
-func luaMain(proto *binary_chunk.Prototype) {
-	maxStackSize := int(proto.MaxStackSize)
-	L := state.New(maxStackSize+8, proto)
-	L.SetTop(maxStackSize)
-	for {
-		pc := L.PC()
-		inst := Instruction(L.Fetch())
-		if inst.Opcode() != OP_RETURN {
-			inst.Execute(L)
-			fmt.Printf("[%02d] %s", pc+1, inst.OpName())
-			printStack(L)
-		} else {
-			break
-		}
 	}
 }
