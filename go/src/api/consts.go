@@ -35,3 +35,10 @@ const (
 	LUA_OPLT        // <
 	LUA_OPLE        // <=
 )
+
+const (
+	LUA_MINSTACK       = 20
+	LUA_MAXSTACK       = 1000000
+	LUA_REGISTRY_INDEX = -LUA_MAXSTACK - 1000
+	LUA_RIDX_GLOBALS   = 2
+)

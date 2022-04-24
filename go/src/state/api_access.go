@@ -68,6 +68,14 @@ func (self *luaState) IsInteger(index int) bool {
 	return ok
 }
 
+func (self *luaState) IsGoFunction(index int) bool {
+	value := self.stack.get(index)
+	if c, ok := value.(*closure); ok {
+		return c.goFunc != nil
+	}
+	return false
+}
+
 func covertToBoolean(value luaValue) bool {
 	switch x := value.(type) {
 	case nil:
@@ -121,4 +129,12 @@ func (self *luaState) ToStringX(index int) (string, bool) {
 func (self *luaState) ToString(index int) string {
 	value, _ := self.ToStringX(index)
 	return value
+}
+
+func (self *luaState) ToGoFunction(index int) GoFunction {
+	value := self.stack.get(index)
+	if c, ok := value.(*closure); ok {
+		return c.goFunc
+	}
+	return nil
 }

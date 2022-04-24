@@ -132,6 +132,25 @@ func printStack(L LuaState) {
 // 	}
 // }
 
+func print(L LuaState) int {
+	argsCount := L.GetTop()
+	for i := 1; i <= argsCount; i++ {
+		if L.IsBoolean(i) {
+			fmt.Printf("%t", L.ToBoolean(i))
+		} else if L.IsString(i) {
+			fmt.Print(L.ToString(i))
+		} else {
+			fmt.Print(L.TypeName(L.Type(i)))
+		}
+
+		if i < argsCount {
+			fmt.Print("\t")
+		}
+	}
+	fmt.Println()
+	return 0
+}
+
 func main() {
 	if len(os.Args) > 1 {
 		data, err := ioutil.ReadFile(os.Args[1])
@@ -139,8 +158,8 @@ func main() {
 			panic(err)
 		}
 		L := state.New()
+		L.Register("print", print)
 		L.Load(data, os.Args[1], "b")
 		L.Call(0, 0)
-
 	}
 }

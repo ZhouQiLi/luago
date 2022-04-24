@@ -3,6 +3,7 @@ package api
 type LuaType = int
 type ArithOp = int
 type CompareOp = int // 比较操作符
+type GoFunction func(LuaState) int
 
 type LuaState interface {
 	// 堆栈操作
@@ -62,4 +63,15 @@ type LuaState interface {
 	// 函数调用
 	Load(chunk []byte, chunkName, mode string) int
 	Call(argsCount, results int)
+
+	// golang函数调用
+	PushGoFunction(f GoFunction)
+	IsGoFunction(index int) bool
+	ToGoFunction(index int) GoFunction
+
+	// 全局环境
+	PushGlobalTable()
+	GetGlobal(name string) LuaType
+	SetGlobal(name string)
+	Register(name string, f GoFunction)
 }
