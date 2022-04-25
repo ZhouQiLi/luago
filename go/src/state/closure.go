@@ -5,15 +5,29 @@ import (
 	"luago/binary_chunk"
 )
 
+type upvalue struct {
+	value *luaValue
+}
+
 type closure struct {
-	proto  *binary_chunk.Prototype
-	goFunc GoFunction
+	proto    *binary_chunk.Prototype
+	goFunc   GoFunction
+	upvalues []*upvalue
 }
 
 func newLuaClosure(proto *binary_chunk.Prototype) *closure {
-	return &closure{proto: proto}
+	c := &closure{proto: proto}
+	if upvalueCount := len(proto.Upvalues); upvalueCount > 0 {
+		c.upvalues = make([]*upvalue, upvalueCount)
+	}
+	return c
 }
 
-func newGoClosure(f GoFunction) *closure {
-	return &closure{goFunc: f}
+func newGoClosure(f GoFunction, upvalueCount int) *closure {
+	c := &closure{goFunc: f}
+	if upvalueCount > 0 {
+		c.upvalues = make([]*upvalue, upvalueCount)
+	}
+
+	return c
 }

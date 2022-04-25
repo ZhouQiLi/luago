@@ -42,6 +42,7 @@
         "OPSUB",
         "OPUNM",
         "Protos",
+        "RIDX",
         "SETTABUP",
         "sizet",
         "TBOOLEAN",

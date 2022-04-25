@@ -44,7 +44,36 @@ func (self *luaState) LoadVararg(n int) {
 }
 
 func (self *luaState) LoadProto(index int) {
-	proto := self.stack.closure.proto.Protos[index]
+	stack := self.stack
+	proto := stack.closure.proto.Protos[index]
 	closure := newLuaClosure(proto)
-	self.stack.push(closure)
+	stack.push(closure)
+
+	for i, upvalueInfo := range proto.Upvalues {
+		upvalueIndex := int(upvalueInfo.Idx)
+		if upvalueInfo.Instack == 1 {
+			if stack.openUpvalues == nil {
+				stack.openUpvalues = map[int]*upvalue{}
+			}
+
+			if openUpvalue, found := stack.openUpvalues[upvalueIndex]; found {
+				closure.upvalues[i] = openUpvalue
+			} else {
+				closure.upvalues[i] = &upvalue{&stack.slots[upvalueIndex]}
+				stack.openUpvalues[upvalueIndex] = closure.upvalues[i]
+			}
+		} else {
+			closure.upvalues[i] = stack.closure.upvalues[upvalueIndex]
+		}
+	}
+}
+
+func (self *luaState) CloseUpvalues(a int) {
+	for i, openUpvalue := range self.stack.openUpvalues {
+		if i >= a-1 {
+			value := *openUpvalue.value
+			openUpvalue.value = &value
+			delete(self.stack.openUpvalues, i)
+		}
+	}
 }

@@ -5,11 +5,36 @@ import (
 )
 
 func getTabUp(i Instruction, vm LuaVM) {
-	a, _, c := i.ABC()
+	a, b, c := i.ABC()
 	a++
-	vm.PushGlobalTable()
+	b++
+
 	vm.GetRK(c)
-	vm.GetTable(-2)
+	vm.GetTable(LuaUpvalueIndex(b))
 	vm.Replace(a)
-	vm.Pop(1)
+}
+
+func setTabUp(i Instruction, vm LuaVM) {
+	a, b, c := i.ABC()
+	a++
+
+	vm.GetRK(b)
+	vm.GetRK(c)
+	vm.SetTable(LuaUpvalueIndex(a))
+}
+
+
+func getUpvalue(i Instruction, vm LuaVM) {
+	a, b, _ := i.ABC()
+	a++
+	b++
+
+	vm.Copy(LuaUpvalueIndex(b), a)
+}
+
+func setUpvalue(i Instruction, vm LuaVM) {
+	a, b, _ := i.ABC()
+	a++
+	b++
+	vm.Copy(a, LuaUpvalueIndex(b))
 }

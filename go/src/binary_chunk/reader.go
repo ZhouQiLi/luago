@@ -114,14 +114,14 @@ func (self *reader) readConstants() []interface{} {
 }
 
 func (self *reader) readUpvalues() []Upvalue {
-	upValues := make([]Upvalue, self.readUint32())
-	for i := range upValues {
-		upValues[i] = Upvalue{
+	upvalues := make([]Upvalue, self.readUint32())
+	for i := range upvalues {
+		upvalues[i] = Upvalue{
 			Instack: self.readByte(),
 			Idx:     self.readByte(),
 		}
 	}
-	return upValues
+	return upvalues
 }
 
 func (self *reader) readProto(parentSource string) *Prototype {

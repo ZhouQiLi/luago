@@ -5,6 +5,10 @@ type ArithOp = int
 type CompareOp = int // 比较操作符
 type GoFunction func(LuaState) int
 
+func LuaUpvalueIndex(i int) int {
+	return LUA_REGISTRY_INDEX - i
+}
+
 type LuaState interface {
 	// 堆栈操作
 	GetTop() int
@@ -74,4 +78,6 @@ type LuaState interface {
 	GetGlobal(name string) LuaType
 	SetGlobal(name string)
 	Register(name string, f GoFunction)
+
+	PushGoClosure(f GoFunction, n int)
 }
