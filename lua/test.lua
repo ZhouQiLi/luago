@@ -1,16 +1,34 @@
-function newCounter()
-    local count = 0
-    return function()
-        count = count + 1
-        return count
+local meta = {}
+meta.__add = function(a, b)
+    print("meta", a, b)
+    local num1 = a
+    local num2 = b
+    if type(a) == "table" then
+        num1 = a.v or a.gg
     end
+    if type(num2) == "table" then
+        num2 = b.v or b.gg
+    end
+    return num1+num2
 end
 
-c1 = newCounter()
-print(c1())
-print(c1())
+local meta2 = {}
+meta2.__add = function(a, b)
+    print("meta2", a, b)
+    local num1 = a
+    local num2 = b
+    if type(a) == "table" then
+        num1 = a.v or a.gg
+    end
+    if type(num2) == "table" then
+        num2 = b.v or b.gg
+    end
+    return num1+num2
+end
 
-c2 = newCounter()
-print(c2())
-print(c1())
-print(c2())
+
+local t = setmetatable({v = 1}, meta)
+local t2 = setmetatable({gg = 2}, meta2)
+
+print(t+t2)
+print(t2+t)

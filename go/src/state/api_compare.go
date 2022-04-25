@@ -4,7 +4,7 @@ import (
 	. "luago/api"
 )
 
-func eq(a, b luaValue) bool {
+func eq(a, b luaValue, L *luaState) bool {
 	switch x := a.(type) {
 	case nil:
 		return b == nil
@@ -32,12 +32,19 @@ func eq(a, b luaValue) bool {
 		default:
 			return false
 		}
+	case *luaTable:
+		if y, ok := b.(*luaTable); ok && x != y && L != nil {
+			if result, ok := callMetamethod(x, y, "__eq", L); ok {
+				return convertToBoolean(result)
+			}
+		}
+		return a == b
 	default:
 		return a == b
 	}
 }
 
-func lt(a, b luaValue) bool {
+func lt(a, b luaValue, L *luaState) bool {
 	switch x := a.(type) {
 	case string:
 		if y, ok := b.(string); ok {
@@ -62,10 +69,14 @@ func lt(a, b luaValue) bool {
 			return false
 		}
 	}
-	panic("comparison error")
+	if result, ok := callMetamethod(a, b, "__lt", L); ok {
+		return convertToBoolean(result)
+	} else {
+		panic("comparison error")
+	}
 }
 
-func le(a, b luaValue) bool {
+func le(a, b luaValue, L *luaState) bool {
 	switch x := a.(type) {
 	case string:
 		if y, ok := b.(string); ok {
@@ -90,7 +101,14 @@ func le(a, b luaValue) bool {
 			return false
 		}
 	}
-	panic("comparison error")
+
+	if result, ok := callMetamethod(a, b, "__le", L); ok {
+		return convertToBoolean(result)
+	} else if result, ok := callMetamethod(a, b, "__lt", L); ok {
+		return !convertToBoolean(result)
+	} else {
+		panic("comparison error")
+	}
 }
 
 func (self *luaState) Compare(index1, index2, op CompareOp) bool {
@@ -98,11 +116,11 @@ func (self *luaState) Compare(index1, index2, op CompareOp) bool {
 	b := self.stack.get(index2)
 	switch op {
 	case LUA_OPEQ:
-		return eq(a, b)
+		return eq(a, b, self)
 	case LUA_OPLT:
-		return lt(a, b)
+		return lt(a, b, self)
 	case LUA_OPLE:
-		return le(a, b)
+		return le(a, b, self)
 	default:
 		panic("invalid compare op")
 	}

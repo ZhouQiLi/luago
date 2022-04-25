@@ -1,6 +1,7 @@
 package state
 
 import (
+	"fmt"
 	. "luago/api"
 	"luago/number"
 )
@@ -62,4 +63,55 @@ func convertToInteger(value luaValue) (int64, bool) {
 	default:
 		return 0, false
 	}
+}
+
+func convertToBoolean(value luaValue) bool {
+	if b, ok := value.(bool); ok {
+		return b
+	}
+	return false
+}
+
+func getMetatable(value luaValue, L *luaState) *luaTable {
+	if t, ok := value.(*luaTable); ok {
+		return t.metatable
+	}
+	key := fmt.Sprintf("_MT%d", typeOf(value))
+	if mt := L.registry.get(key); mt != nil {
+		return mt.(*luaTable)
+	}
+
+	return nil
+}
+
+func setMetatable(value luaValue, mt *luaTable, L *luaState) {
+	if t, ok := value.(*luaTable); ok {
+		t.metatable = mt
+		return
+	}
+	key := fmt.Sprintf("_MT%d", typeOf(value))
+	L.registry.put(key, mt)
+}
+
+func getMetaField(value luaValue, fieldName string, L *luaState) luaValue {
+	if metatable := getMetatable(value, L); metatable != nil {
+		return metatable.get(fieldName)
+	}
+	return nil
+}
+
+func callMetamethod(a, b luaValue, metamethodName string, L *luaState) (luaValue, bool) {
+	var metamethod luaValue
+	if metamethod = getMetaField(a, metamethodName, L); metamethod == nil {
+		if metamethod = getMetaField(b, metamethodName, L); metamethod == nil {
+			return nil, false
+		}
+	}
+
+	L.stack.check(4)
+	L.stack.push(metamethod)
+	L.stack.push(a)
+	L.stack.push(b)
+	L.Call(2, 1)
+	return L.stack.pop(), true
 }
