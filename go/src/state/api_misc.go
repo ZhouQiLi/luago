@@ -13,6 +13,18 @@ func (self *luaState) Len(index int) {
 	}
 }
 
+func (self *luaState) RawLen(index int) uint {
+	value := self.stack.get(index)
+	switch x := value.(type) {
+	case string:
+		return uint(len(x))
+	case *luaTable:
+		return uint(x.len())
+	default:
+		return 0
+	}
+}
+
 func (self *luaState) Concat(n int) {
 	if n == 0 {
 		self.stack.push("")

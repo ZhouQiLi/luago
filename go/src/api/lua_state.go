@@ -80,4 +80,14 @@ type LuaState interface {
 	Register(name string, f GoFunction)
 
 	PushGoClosure(f GoFunction, n int)
+
+	// 元表
+	GetMetatable(index int) bool
+	SetMetatable(index int)
+	RawLen(index int) uint
+	RawEqual(index1, index2 int) bool
+	RawGet(index int) LuaType
+	RawSet(index int)
+	RawGetI(index int, i int64) LuaType
+	RawSetI(index int, i int64)
 }

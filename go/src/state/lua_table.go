@@ -106,3 +106,7 @@ func (self *luaTable) put(key, value luaValue) {
 		delete(self._map, key)
 	}
 }
+
+func (self *luaTable) hasMetaField(fieldName string) bool {
+	return self.metatable != nil && self.metatable.get(fieldName) != nil
+}

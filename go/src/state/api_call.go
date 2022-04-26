@@ -1,7 +1,6 @@
 package state
 
 import (
-	"fmt"
 	. "luago/api"
 	"luago/binary_chunk"
 	"luago/vm"
@@ -22,15 +21,25 @@ func (self *luaState) Load(chunk []byte, chunkName, mode string) int {
 
 func (self *luaState) Call(argsCount, resultCount int) {
 	value := self.stack.get(-(argsCount + 1))
-	if c, ok := value.(*closure); ok {
+	c, ok := value.(*closure)
+
+	if !ok {
+		// 原本传入的参数中没有函数名(value)这一项, 对于有__call元表的需要传入函数名, 至于位置是(-(argsCount + 1)或(-(argsCount + 2)不重要因为内容是一样的。
+		if metaField := getMetaField(value, "__call", self); metaField != nil {
+			if c, ok = metaField.(*closure); ok {
+				self.stack.push(value)
+				self.Insert(-(argsCount + 2))
+				argsCount++
+			}
+		}
+	}
+
+	if ok {
 		if c.proto != nil {
-			fmt.Printf("call %s<%d,%d>\n", c.proto.Source, c.proto.LineDefined, c.proto.LastLineDefined)
 			self.callLuaClosure(argsCount, resultCount, c)
 		} else {
 			self.callGoClosure(argsCount, resultCount, c)
 		}
-	} else {
-		panic("not function")
 	}
 }
 
