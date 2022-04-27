@@ -38,6 +38,7 @@ func pushFunctionAndArgs(a, b int, vm LuaVM) int {
 	}
 }
 
+// c是要弹出的参数个数, 因为参数1有特殊作用, 所以实际参数个数是c-1个。
 func popResults(a, c int, vm LuaVM) {
 	if c == 1 {
 
@@ -102,4 +103,13 @@ func self(i Instruction, vm LuaVM) {
 	vm.GetRK(c)
 	vm.GetTable(b)
 	vm.Replace(a)
+}
+
+func tForCall(i Instruction, vm LuaVM) {
+	a, _, c := i.ABC()
+	a++
+
+	pushFunctionAndArgs(a, 3, vm)
+	vm.Call(2, c)
+	popResults(a+3, c+1, vm)
 }

@@ -90,4 +90,7 @@ type LuaState interface {
 	RawSet(index int)
 	RawGetI(index int, i int64) LuaType
 	RawSetI(index int, i int64)
+
+	// 迭代器
+	Next(index int) bool
 }

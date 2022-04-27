@@ -163,6 +163,40 @@ func setMetatable(L LuaState) int {
 	return 1
 }
 
+func next(L LuaState) int {
+	L.SetTop(2)
+	if L.Next(1) {
+		return 2
+	} else {
+		L.PushNil()
+		return 1
+	}
+}
+
+func pairs(L LuaState) int {
+	L.PushGoFunction(next)
+	L.PushValue(1)
+	L.PushNil()
+	return 3
+}
+
+func _ipairsAux(L LuaState) int {
+	i := L.ToInteger(2) + 1
+	L.PushInteger(i)
+	if L.GetI(1, i) == LUA_TNIL {
+		return 1
+	} else {
+		return 2
+	}
+}
+
+func ipairs(L LuaState) int {
+	L.PushGoFunction(_ipairsAux)
+	L.PushValue(1)
+	L.PushInteger(0)
+	return 3
+}
+
 func main() {
 	if len(os.Args) > 1 {
 		data, err := ioutil.ReadFile(os.Args[1])
@@ -173,6 +207,9 @@ func main() {
 		L.Register("print", print)
 		L.Register("getmetatable", getMetatable)
 		L.Register("setmetatable", setMetatable)
+		L.Register("next", next)
+		L.Register("pairs", pairs)
+		L.Register("ipairs", ipairs)
 		L.Load(data, os.Args[1], "b")
 		L.Call(0, 0)
 	}
