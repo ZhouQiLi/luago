@@ -16,7 +16,7 @@ func (self *luaState) Load(chunk []byte, chunkName, mode string) int {
 		c.upvalues[0] = &upvalue{&env}
 	}
 
-	return 0
+	return LUA_OK
 }
 
 func (self *luaState) Call(argsCount, resultCount int) {
@@ -96,4 +96,23 @@ func (self *luaState) callGoClosure(argsCount, resultCount int, c *closure) {
 		self.stack.check(len(results))
 		self.stack.pushN(results, resultCount)
 	}
+}
+
+func (self *luaState) PCall(argsCount, resultCount, msgh int) (status int) {
+	caller := self.stack
+	status = LUA_ERRRUN
+
+	defer func() {
+		if err := recover(); err != nil {
+			for self.stack != caller {
+				self.popLuaStack()
+			}
+			self.stack.push(err)
+		}
+	}()
+
+	self.Call(argsCount, resultCount)
+	status = LUA_OK
+
+	return
 }

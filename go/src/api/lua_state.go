@@ -93,4 +93,8 @@ type LuaState interface {
 
 	// 迭代器
 	Next(index int) bool
+
+	// 错误处理
+	Error() int
+	PCall(argsCount, resultCount, msgh int) int
 }

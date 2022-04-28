@@ -64,3 +64,8 @@ func (self *luaState) Next(index int) bool {
 	}
 	panic("table expected!")
 }
+
+func (self *luaState) Error() int {
+	err := self.stack.pop()
+	panic(err)
+}
