@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	. "luago/api"
 	. "luago/compiler/lexer"
+	"luago/compiler/parser"
 
 	// . "luago/vm"
 	"os"
@@ -229,16 +231,6 @@ func pCall(L LuaState) int {
 // 	}
 // }
 
-func main() {
-	if len(os.Args) > 1 {
-		data, err := ioutil.ReadFile(os.Args[1])
-		if err != nil {
-			panic(err)
-		}
-		testLexer(string(data), os.Args[1])
-	}
-}
-
 func testLexer(chunk, chunkName string) {
 	lexer := NewLexer(chunk, chunkName)
 	for {
@@ -268,5 +260,24 @@ func kindToCategory(kind int) string {
 		return "string"
 	default:
 		return "other"
+	}
+}
+
+func testParser(chunk, chunkName string) {
+	ast := parser.Parse(chunk, chunkName)
+	b, err := json.Marshal(ast)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(b))
+}
+
+func main() {
+	if len(os.Args) > 1 {
+		data, err := ioutil.ReadFile(os.Args[1])
+		if err != nil {
+			panic(err)
+		}
+		testParser(string(data), os.Args[1])
 	}
 }

@@ -28,7 +28,7 @@ type FloatExp struct {
 	Val  float64
 }
 
-type String struct {
+type StringExp struct {
 	Line int
 	Str  string
 }
@@ -51,7 +51,7 @@ type BinopExp struct {
 	Exp2 Exp
 }
 
-type ConstExp struct {
+type ConcatExp struct {
 	Line int
 	Exps []Exp
 }
@@ -85,6 +85,6 @@ type FuncCallExp struct {
 	Line      int
 	LastLine  int
 	PrefixExp Exp
-	NameExp   Exp
+	NameExp   *StringExp
 	Args      []Exp
 }
