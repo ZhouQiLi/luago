@@ -7,6 +7,7 @@ import (
 	. "luago/api"
 	. "luago/compiler/lexer"
 	"luago/compiler/parser"
+	"luago/state"
 
 	// . "luago/vm"
 	"os"
@@ -112,12 +113,12 @@ func printStack(L LuaState) {
 // 		if err != nil {
 // 			panic(err)
 // 		}
-// 		proto := binary_chunk.Undump(data)
+// 		proto := binchunk.Undump(data)
 // 		luaMain(proto)
 // 	}
 // }
 
-// func luaMain(proto *binary_chunk.Prototype) {
+// func luaMain(proto *binchunk.Prototype) {
 // 	maxStackSize := int(proto.MaxStackSize)
 // 	L := state.New(maxStackSize+8, proto)
 // 	L.SetTop(maxStackSize)
@@ -211,25 +212,25 @@ func pCall(L LuaState) int {
 	return L.GetTop()
 }
 
-// func main() {
-// 	if len(os.Args) > 1 {
-// 		data, err := ioutil.ReadFile(os.Args[1])
-// 		if err != nil {
-// 			panic(err)
-// 		}
-// 		L := state.New()
-// 		L.Register("print", print)
-// 		L.Register("getmetatable", getMetatable)
-// 		L.Register("setmetatable", setMetatable)
-// 		L.Register("next", next)
-// 		L.Register("pairs", pairs)
-// 		L.Register("ipairs", ipairs)
-// 		L.Register("error", _error)
-// 		L.Register("pcall", pCall)
-// 		L.Load(data, os.Args[1], "b")
-// 		L.Call(0, 0)
-// 	}
-// }
+func main() {
+	if len(os.Args) > 1 {
+		data, err := ioutil.ReadFile(os.Args[1])
+		if err != nil {
+			panic(err)
+		}
+		L := state.New()
+		L.Register("print", print)
+		L.Register("getmetatable", getMetatable)
+		L.Register("setmetatable", setMetatable)
+		L.Register("next", next)
+		L.Register("pairs", pairs)
+		L.Register("ipairs", ipairs)
+		L.Register("error", _error)
+		L.Register("pcall", pCall)
+		L.Load(data, os.Args[1], "bt")
+		L.Call(0, 0)
+	}
+}
 
 func testLexer(chunk, chunkName string) {
 	lexer := NewLexer(chunk, chunkName)
@@ -272,12 +273,12 @@ func testParser(chunk, chunkName string) {
 	fmt.Println(string(b))
 }
 
-func main() {
-	if len(os.Args) > 1 {
-		data, err := ioutil.ReadFile(os.Args[1])
-		if err != nil {
-			panic(err)
-		}
-		testParser(string(data), os.Args[1])
-	}
-}
+// func main() {
+// 	if len(os.Args) > 1 {
+// 		data, err := ioutil.ReadFile(os.Args[1])
+// 		if err != nil {
+// 			panic(err)
+// 		}
+// 		testParser(string(data), os.Args[1])
+// 	}
+// }

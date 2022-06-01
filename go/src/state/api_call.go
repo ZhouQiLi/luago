@@ -2,12 +2,19 @@ package state
 
 import (
 	. "luago/api"
-	"luago/binary_chunk"
+	binchunk "luago/binary_chunk"
+	"luago/compiler"
 	"luago/vm"
 )
 
 func (self *luaState) Load(chunk []byte, chunkName, mode string) int {
-	proto := binary_chunk.Undump(chunk)
+	var proto *binchunk.Prototype
+	if binchunk.IsBinaryChunk(chunk) {
+		proto = binchunk.Undump(chunk)
+	} else {
+		proto = compiler.Compile(string(chunk), chunkName)
+	}
+
 	c := newLuaClosure(proto)
 	self.stack.push(c)
 

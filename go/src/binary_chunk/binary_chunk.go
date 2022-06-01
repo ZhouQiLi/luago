@@ -1,4 +1,4 @@
-package binary_chunk
+package binchunk
 
 const (
 	LUA_SIGNATURE    = "\x1bLua"
@@ -75,4 +75,8 @@ func Undump(data []byte) *Prototype {
 	reader.checkHeader()
 	reader.readByte()
 	return reader.readProto("")
+}
+
+func IsBinaryChunk(data []byte) bool {
+	return len(data) > 4 && string(data[:4]) == LUA_SIGNATURE
 }

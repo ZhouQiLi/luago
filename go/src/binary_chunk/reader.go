@@ -1,4 +1,4 @@
-package binary_chunk
+package binchunk
 
 import (
 	"encoding/binary"
