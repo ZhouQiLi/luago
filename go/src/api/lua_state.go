@@ -10,6 +10,11 @@ func LuaUpvalueIndex(i int) int {
 }
 
 type LuaState interface {
+	BasicAPI
+	AuxLib
+}
+
+type BasicAPI interface {
 	// 堆栈操作
 	GetTop() int
 	AbsIndex(index int) int
@@ -53,6 +58,7 @@ type LuaState interface {
 	Compare(index1, index2 int, op CompareOp) bool
 	Len(index int)
 	Concat(n int)
+	StringToNumber(s string) bool
 
 	// 表操作
 	NewTable()

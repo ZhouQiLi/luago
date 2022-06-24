@@ -3,14 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	. "luago/api"
 	. "luago/compiler/lexer"
 	"luago/compiler/parser"
 	"luago/state"
-
-	// . "luago/vm"
 	"os"
+	// . "luago/vm"
 )
 
 // func main() {
@@ -135,102 +133,25 @@ func printStack(L LuaState) {
 // 	}
 // }
 
-func print(L LuaState) int {
-	argsCount := L.GetTop()
-	for i := 1; i <= argsCount; i++ {
-		if L.IsBoolean(i) {
-			fmt.Printf("%t", L.ToBoolean(i))
-		} else if L.IsString(i) {
-			fmt.Print(L.ToString(i))
-		} else {
-			fmt.Print(L.TypeName(L.Type(i)))
-		}
-
-		if i < argsCount {
-			fmt.Print("\t")
-		}
-	}
-	fmt.Println()
-	return 0
-}
-
-func getMetatable(L LuaState) int {
-	if !L.GetMetatable(1) {
-		L.PushNil()
-	}
-	return 1
-}
-
-func setMetatable(L LuaState) int {
-	L.SetMetatable(1)
-	return 1
-}
-
-func next(L LuaState) int {
-	L.SetTop(2)
-	if L.Next(1) {
-		return 2
-	} else {
-		L.PushNil()
-		return 1
-	}
-}
-
-func pairs(L LuaState) int {
-	L.PushGoFunction(next)
-	L.PushValue(1)
-	L.PushNil()
-	return 3
-}
-
-func _ipairsAux(L LuaState) int {
-	i := L.ToInteger(2) + 1
-	L.PushInteger(i)
-	if L.GetI(1, i) == LUA_TNIL {
-		return 1
-	} else {
-		return 2
-	}
-}
-
-func ipairs(L LuaState) int {
-	L.PushGoFunction(_ipairsAux)
-	L.PushValue(1)
-	L.PushInteger(0)
-	return 3
-}
-
-func _error(L LuaState) int {
-	return L.Error()
-}
-
-func pCall(L LuaState) int {
-	argsCount := L.GetTop() - 1
-	status := L.PCall(argsCount, -1, 0)
-	L.PushBoolean(status == LUA_OK)
-	L.Insert(1)
-	return L.GetTop()
-}
-
-func main() {
-	if len(os.Args) > 1 {
-		data, err := ioutil.ReadFile(os.Args[1])
-		if err != nil {
-			panic(err)
-		}
-		L := state.New()
-		L.Register("print", print)
-		L.Register("getmetatable", getMetatable)
-		L.Register("setmetatable", setMetatable)
-		L.Register("next", next)
-		L.Register("pairs", pairs)
-		L.Register("ipairs", ipairs)
-		L.Register("error", _error)
-		L.Register("pcall", pCall)
-		L.Load(data, os.Args[1], "bt")
-		L.Call(0, 0)
-	}
-}
+// func main() {
+// 	if len(os.Args) > 1 {
+// 		data, err := ioutil.ReadFile(os.Args[1])
+// 		if err != nil {
+// 			panic(err)
+// 		}
+// 		L := state.New()
+// 		L.Register("print", print)
+// 		L.Register("getmetatable", getMetatable)
+// 		L.Register("setmetatable", setMetatable)
+// 		L.Register("next", next)
+// 		L.Register("pairs", pairs)
+// 		L.Register("ipairs", ipairs)
+// 		L.Register("error", _error)
+// 		L.Register("pcall", pCall)
+// 		L.Load(data, os.Args[1], "bt")
+// 		L.Call(0, 0)
+// 	}
+// }
 
 func testLexer(chunk, chunkName string) {
 	lexer := NewLexer(chunk, chunkName)
@@ -282,3 +203,12 @@ func testParser(chunk, chunkName string) {
 // 		testParser(string(data), os.Args[1])
 // 	}
 // }
+
+func main() {
+	if len(os.Args) > 1 {
+		ls := state.New()
+		ls.OpenLibs()
+		ls.LoadFile(os.Args[1])
+		ls.Call(0, -1)
+	}
+}

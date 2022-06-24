@@ -1,5 +1,7 @@
 package state
 
+import "luago/number"
+
 func (self *luaState) Len(index int) {
 	value := self.stack.get(index)
 	if s, ok := value.(string); ok {
@@ -68,4 +70,16 @@ func (self *luaState) Next(index int) bool {
 func (self *luaState) Error() int {
 	err := self.stack.pop()
 	panic(err)
+}
+
+func (self *luaState) StringToNumber(s string) bool {
+	if n, ok := number.ParseInteger(s); ok {
+		self.PushInteger(n)
+		return true
+	}
+	if n, ok := number.ParseFloat(s); ok {
+		self.PushNumber(n)
+		return true
+	}
+	return false
 }
